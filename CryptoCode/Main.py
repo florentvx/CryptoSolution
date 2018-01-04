@@ -6,11 +6,9 @@ import krakenex
 from Transaction import *
 from IndexCalculations import *
 
-p = Price(100.0, "EUR")
-
-
+print("CryptoCode.py")
+time.sleep(1)
 k = krakenex.API()
-
 #ret = k.query_public("OHLC", req = {'pair': "XETHZUSD", 'since': str(1499000000)})
 
 k.load_key("keys.txt")
@@ -48,11 +46,11 @@ I.CalculateStrategyIndex()
 #I.RefactorIndex("LTC",0.25)
 #I.RefactorIndex("XRP", 0.25)
 
-fig2 = plt.figure()
+fig1 = plt.figure()
 plt.plot(I.DataFrame["time"], I.DataFrame["Total"])
 plt.show()
 
-fig1 = plt.figure()
+fig2 = plt.figure()
 plt.plot(I.DataFrame["time"], I.DataFrame["Index_XBT"],'-')
 plt.plot(I.DataFrame["time"], I.DataFrame["Index_ETH"],'-')
 plt.plot(I.DataFrame["time"], I.DataFrame["Index_Strat"],'-')

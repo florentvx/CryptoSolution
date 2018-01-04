@@ -60,10 +60,10 @@ class Index:
 
     def CalculateIndex(self, ID: str):
         self.DataFrame["Return_" + ID] = self.DataFrame["Spot_" + ID]/self.DataFrame["Spot_" + ID].shift(1) - 1
-        Index = [1000]
+        IndexList = [1000]
         for (index, row) in self.DataFrame[1:].iterrows():
-            Index += [Index[-1] * (1 + row["Return_" + ID])]
-        self.DataFrame["Index_" + ID] = Index
+            IndexList += [IndexList[-1] * (1 + row["Return_" + ID])]
+        self.DataFrame["Index_" + ID] = IndexList
 
     def CalculateAllIndices(self):
         for cur in self.Currencies:

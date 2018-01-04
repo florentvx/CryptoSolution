@@ -107,13 +107,22 @@ class Allocation:
         newAlloc.UpdatePercentages(FX)
         return newAlloc
 
+    def Total(self, cur: Currency = Currency.EUR):
+        usedCur = self.Dictionary.keys.First()
+        if cur in self.Dictionary.keys():
+            usedCur = cur
+        allocCur = self.Dictionary[cur]
+        return Price(round(allocCur.Amount / allocCur.Percentage,2), usedCur)
+
+            
 
     @property
     def ToString(self):
         res =  "Allocation: " + '\n'
         for cur in self.Dictionary.keys():
             res += cur.ToString + ": " + self.Dictionary[cur].ToString + '\n'
-        res += "Fees: " + self.Fee.ToString
+        res += "Fees: " + self.Fee.ToString + "\n"
+        res += "Total : " + self.Total.ToString
         res += '\n'
         return res
 
