@@ -2,15 +2,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>b6a6e7bb-d6f8-4af2-8be8-bb0666a5ca0a</ProjectGuid>
-    <ProjectHome>
-    </ProjectHome>
-    <StartupFile>Strat1Index.py</StartupFile>
-    <SearchPath>..\CryptoCode;..\Library;..\Framework</SearchPath>
+    <ProjectGuid>ab0bcc0b-40a6-46f3-80d6-3438e118d839</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>StratBackTest</Name>
-    <RootNamespace>CryptoSolution</RootNamespace>
+    <Name>Framework</Name>
+    <RootNamespace>Framework</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,26 +22,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Strat1Index.py">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CryptoCode\CryptoCode.pyproj">
-      <Name>CryptoCode</Name>
-      <Project>{e79dc1ee-3e40-4c5f-9d2b-bd9345b2226b}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Framework\Framework.pyproj">
-      <Name>Framework</Name>
-      <Project>{ab0bcc0b-40a6-46f3-80d6-3438e118d839}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Library\Library.pyproj">
-      <Name>Library</Name>
-      <Project>{75977049-e7ea-483a-a76c-50e4ee776892}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Compile Include="Prices.py" />
+    <Compile Include="SortedDictionary.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

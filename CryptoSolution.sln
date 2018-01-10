@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "StratBackTest", "CryptoSolution\StratBackTest.pyproj", "{B6A6E7BB-D6F8-4AF2-8BE8-BB0666A5CA0A}"
-EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CryptoCode", "CryptoCode\CryptoCode.pyproj", "{E79DC1EE-3E40-4C5F-9D2B-BD9345B2226B}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "StratBackTest", "StratBackTest\StratBackTest.pyproj", "{B6A6E7BB-D6F8-4AF2-8BE8-BB0666A5CA0A}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Library", "Library\Library.pyproj", "{75977049-E7EA-483A-A76C-50E4EE776892}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Framework", "Framework\Framework.pyproj", "{AB0BCC0B-40A6-46F3-80D6-3438E118D839}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +17,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B6A6E7BB-D6F8-4AF2-8BE8-BB0666A5CA0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6A6E7BB-D6F8-4AF2-8BE8-BB0666A5CA0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E79DC1EE-3E40-4C5F-9D2B-BD9345B2226B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E79DC1EE-3E40-4C5F-9D2B-BD9345B2226B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6A6E7BB-D6F8-4AF2-8BE8-BB0666A5CA0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6A6E7BB-D6F8-4AF2-8BE8-BB0666A5CA0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75977049-E7EA-483A-A76C-50E4EE776892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75977049-E7EA-483A-A76C-50E4EE776892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB0BCC0B-40A6-46F3-80D6-3438E118D839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB0BCC0B-40A6-46F3-80D6-3438E118D839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

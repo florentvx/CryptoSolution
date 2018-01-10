@@ -2,15 +2,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>b6a6e7bb-d6f8-4af2-8be8-bb0666a5ca0a</ProjectGuid>
-    <ProjectHome>
-    </ProjectHome>
-    <StartupFile>Strat1Index.py</StartupFile>
-    <SearchPath>..\CryptoCode;..\Library;..\Framework</SearchPath>
+    <ProjectGuid>75977049-e7ea-483a-a76c-50e4ee776892</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>Requests.py</StartupFile>
+    <SearchPath>..\CryptoCode;..\Framework</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>StratBackTest</Name>
-    <RootNamespace>CryptoSolution</RootNamespace>
+    <Name>Library</Name>
+    <RootNamespace>Library</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,9 +20,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Strat1Index.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Library.py" />
+    <Compile Include="Requests.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CryptoCode\CryptoCode.pyproj">
@@ -34,11 +32,6 @@
     <ProjectReference Include="..\Framework\Framework.pyproj">
       <Name>Framework</Name>
       <Project>{ab0bcc0b-40a6-46f3-80d6-3438e118d839}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Library\Library.pyproj">
-      <Name>Library</Name>
-      <Project>{75977049-e7ea-483a-a76c-50e4ee776892}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

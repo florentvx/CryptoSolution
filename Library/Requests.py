@@ -1,11 +1,12 @@
 import urllib
+from pandas import Timestamp
+from Library import ReadFile, CreateGrossFile
 import json
 import urllib.request
 import time
 import datetime
 import pandas as pd
 from Prices import Currency, CurrencyPair
-
 
 
 def ToDate(sec):
@@ -50,7 +51,7 @@ def JsonToDataFrame(Json, Numbers, type = "ledger"):
 #interval = time frame interval in minutes (optional):
 #	1 (default), 5, 15, 30, 60, 240, 1440, 10080, 21600
 
-def OHLC(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,1,1), freq = 1140):
+def OHLCKraken(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,1,1), freq = 1140):
     DF = pd.DataFrame()
     urlStart = "https://api.kraken.com/0/public/OHLC?"
     pairID = CurrencyPair(X,Z).RequestID
@@ -89,6 +90,27 @@ def OHLC(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,
     DF["volume"] = volume
     DF["count"] = count
     return DF
+
+def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,1,1), freq = 1140):
+    DF = ReadFile(CurrencyPair(X,Z),freq)
+    if DF is None:
+        DF = OHLCKraken(X,Z,startDate,freq)
+    else:
+        # Checks if it needs an update
+        n = len(DF)
+        DF["time"] = DF["time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+        lastDate = DF["time"][n-1]
+        lastDate = time.mktime(lastDate.timetuple())
+        now = time.time()
+        nb_lines = int((now - lastDate)/(freq * 60.0) - 1)
+        if nb_lines > 0:
+            print("Needs an update!")
+            DF2 = OHLCKraken(X,Z,startDate,freq)
+            n2 = len(DF2)
+            DF = DF.append(DF2[(n2-1-nb_lines):(n2-1)])
+    CreateGrossFile(CurrencyPair(X, Z),freq,DF)
+    return DF
+
 
 def ComputeReturns(data, col = "close", title = "return"):
     returns = [0.]
@@ -136,3 +158,6 @@ def ComputePricesPerDay(DF):
         DF[str(key)] = data[key][:data_len]
     return DF
 
+def Test():
+    DF = OHLCLibrary(freq = 240)
+    return ReadFile(CurrencyPair(Currency.XBT, Currency.EUR), 240)

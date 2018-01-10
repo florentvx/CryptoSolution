@@ -84,6 +84,8 @@ class CurrencyPair:
         else:
             return self.X.ToID + self.Y.ToID
 
+    def GetInverse(self):
+        return CurrencyPair(self.Y, self.X)
 
 class XChangeRate:
 
