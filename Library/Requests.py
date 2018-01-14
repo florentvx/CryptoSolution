@@ -1,6 +1,6 @@
 import urllib
 from pandas import Timestamp
-from Library import ReadFile, CreateGrossFile
+from Library import ReadFile, CreateGrossFile, CompleteHoles
 import json
 import urllib.request
 import time
@@ -91,7 +91,7 @@ def OHLCKraken(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime
     DF["count"] = count
     return DF
 
-def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,1,1), freq = 1140):
+def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,1,1), freq = 1140, isUpdating : bool = True):
     DF = ReadFile(CurrencyPair(X,Z),freq)
     if DF is None:
         DF = OHLCKraken(X,Z,startDate,freq)
@@ -103,11 +103,12 @@ def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetim
         lastDate = time.mktime(lastDate.timetuple())
         now = time.time()
         nb_lines = int((now - lastDate)/(freq * 60.0) - 1)
-        if nb_lines > 0:
+        if nb_lines > 0 and isUpdating:
             print("Needs an update!")
             DF2 = OHLCKraken(X,Z,startDate,freq)
             n2 = len(DF2)
             DF = DF.append(DF2[(n2-1-nb_lines):(n2-1)])
+    DF = CompleteHoles(DF, freq)
     CreateGrossFile(CurrencyPair(X, Z),freq,DF)
     return DF
 
