@@ -1,6 +1,6 @@
 import urllib
 from pandas import Timestamp
-from Library import ReadFile, CreateGrossFile, CompleteHoles
+from Library import *
 import json
 import urllib.request
 import time
@@ -109,6 +109,7 @@ def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetim
             n2 = len(DF2)
             DF = DF.append(DF2[(n2-1-nb_lines):(n2-1)])
     DF = CompleteHoles(DF, freq)
+    LinearInterpolationFillMethod(DF, datetime.datetime(2018,1,11,8), datetime.datetime(2018,1,13,8), freq)
     CreateGrossFile(CurrencyPair(X, Z),freq,DF)
     return DF
 

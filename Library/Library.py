@@ -70,4 +70,24 @@ def CompleteHoles(DF : pd.DataFrame, freq: int):
     return DF
 
 
-#CompleteHoles(CurrencyPair(Currency("XBT"),Currency("EUR")), 240)
+def LinearInterpolationFillMethod(DF: pd.DataFrame, start: datetime.datetime, end: datetime.datetime, freq: int):
+    columns = ["open", "high", "low", "close", "vwap", "volume", "count"]
+    DFstart = DF[DF["time"] < start]
+    DFend = DF[DF["time"] > end]
+    row0 = DFstart.tail(1)
+    row1 = DFend.head(1)
+    DFmid = DF[DF["time"] >= start]
+    DFmid = DFmid[DFmid["time"] <= end]
+    n = len(DFmid)
+    i = 1
+    res = {}
+    for col in columns:
+        res[col] = []
+    for (index, row) in DFmid.iterrows():
+        w = i/float(n)
+        for col in columns:
+            res[col] += [(1 - w) * float(row0[col]) + w * float(row1[col])]
+        i += 1
+    for col in columns:
+        DF[col] = list(DFstart[col]) + res[col] + list(DFend[col])
+    #print(DF)
