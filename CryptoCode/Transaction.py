@@ -57,19 +57,19 @@ class TransactionList:
     def SetList(self, list):
         self.List = list
 
-    def Download(self, data : pd.DataFrame):
-        paidPrice = Price(0,Currency.NONE)
-        receivedPrice = Price(0,Currency.NONE)
-        fees = Price(0,Currency.NONE)
+    def Download(self, data : pd.DataFrame, curRef: Currency = Currency.EUR):
+        paidPrice = Price(0,curRef)
+        receivedPrice = Price(0,curRef)
+        fees = Price(0,curRef)
         self.List = []
         for (index, row) in data.iterrows():
             if row["type"] == "deposit":
                 self.List += [Transaction(
                     TransactionType.Deposit,
                     row["time"],
-                    Price(0,Currency.NONE),
+                    Price(0, curRef),
                     Price(row["amount"],row["asset"][1:]),
-                    Price(0,Currency.NONE))]
+                    Price(0, curRef))]
             elif row["type"] == "trade":
                 asset = row["asset"]
                 asset = asset[(len(asset) - 3):]
@@ -85,18 +85,15 @@ class TransactionList:
                     else:
                         raise Exception("Double fees Problem")
                 if paidPrice.Amount > 0 and receivedPrice.Amount > 0:
-                    if fees.Amount > 0:
-                        self.List += [Transaction(
-                            TransactionType.Trade,
-                            row["time"],
-                            paidPrice,
-                            receivedPrice,
-                            fees)]
-                        paidPrice = Price(0,Currency.NONE)
-                        receivedPrice = Price(0,Currency.NONE)
-                        fees = Price(0,Currency.NONE)
-                    else:
-                        raise Exception("No fee trade")
+                    self.List += [Transaction(
+                        TransactionType.Trade,
+                        row["time"],
+                        paidPrice,
+                        receivedPrice,
+                        fees)]
+                    paidPrice = Price(0,curRef)
+                    receivedPrice = Price(0,curRef)
+                    fees = Price(0,curRef)
             else:
                 raise Exception("Trade type Unknown")
 
