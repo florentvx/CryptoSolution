@@ -50,7 +50,7 @@ def CompleteHoles(DF : pd.DataFrame, freq: int):
         if lastDate != 0:
             diff = (date - lastDate)
             diffSecs = diff.days * 24 * 60 * 60 + diff.seconds
-            if diffSecs != freq * 60:
+            if diffSecs > freq * 60:
                 if diffSecs == 0:
                     DF = DF.drop(index)
                 else:
@@ -67,6 +67,7 @@ def CompleteHoles(DF : pd.DataFrame, freq: int):
                         DF = DF.append(row)
         lastDate = date
     DF = DF.sort_values("time")
+    DF = DF.reset_index(drop = True)
     return DF
 
 

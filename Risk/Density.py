@@ -16,11 +16,11 @@ class Density:
 
     def DownloadReturns(self):
         DF = pd.DataFrame()
-        DF = OHLCLibrary(self.Currency, self.CurrencyRef, freq = self.Freq, isUpdating = False)
+        DF = OHLCLibrary(self.Currency, self.CurrencyRef, freq = self.Freq, live = False)
         DF["Return"] = DF[self.Fixing]/DF[self.Fixing].shift(1) - 1
         self.Returns = list(DF["Return"][1:])
 
-    def GetPDF(self, max: float = 0.25, n: int = 1000):
+    def GetPDF(self, max: float = 0.5, n: int = 1000):
         self.dx = 2 * max / float(n)
         self.Max = max
         self.Points = [-max + self.dx * i  for i in range(n + 1)]
@@ -36,16 +36,17 @@ class Density:
             return pd.DataFrame()
 
 
-    def GetCDF(self, precision : int = 100):
+    def GetCDF(self, precision : int = 1000):
         CDF = []
         dx = 1 / float(precision)
         x = dx
         i = 0
+        imax = len(self.PDF)
         for i_percentile in range(precision - 1):
             tot = 0
             i = 0
             dtot = 0
-            while tot + dtot < x:
+            while tot + dtot < x and i< imax:
                 tot += dtot
                 dtot = self.dx * self.PDF[i]
                 i += 1
@@ -80,13 +81,25 @@ class Density:
             else:
                 w = (ret - self.CDF[i]) / (self.CDF[i-1] - self.CDF[i])
                 Quantiles += [(i + 1 - w) / n]
+            if Quantiles[-1] < 0 or Quantiles[-1] > 1:
+                print("error")
         self.Quantiles = Quantiles
 
-    def TransformStdNorm(self):
+    def TransformToStdNorm(self):
         StdReturns = []
         for q in self.Quantiles:
             StdReturns += [stats.norm.ppf(q)]
         self.StdReturns = StdReturns
+
+    def TransformFromStdNorm(self, ret):
+        q = stats.norm.cdf(ret)
+        n = len(self.CDF)
+        i = int((n + 1) * q)
+        w = n * q - i
+        if i >= n - 1:
+            return self.CDF[n - 1]
+        else:
+            return (1 - w) * self.CDF[i] + w * self.CDF[i+1]
 
     def TotalTransform(self):
         self.DownloadReturns()
@@ -94,19 +107,18 @@ class Density:
         self.GetPDF()
         self.GetCDF()
         self.GetHistoricalQuantiles()
-        self.TransformStdNorm()
+        self.TransformToStdNorm()
 
+def Example():
+    d = Density(Currency.BCH)
+    d.TotalTransform()
 
-d = Density(Currency.XBT)
-d.TotalTransform()
-
-plt.figure()
-plt.subplot(211)
-plt.hist(d.Returns, bins = 50)
-plt.subplot(212)
-plt.hist(d.StdReturns, bins = 50)
-plt.show()
-
+    plt.figure()
+    plt.subplot(211)
+    plt.hist(d.Returns, bins = 50)
+    plt.subplot(212)
+    plt.hist(d.StdReturns, bins = 50)
+    plt.show()
 
 
 

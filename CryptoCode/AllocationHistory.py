@@ -2,6 +2,7 @@ from FXMarket import *
 from Transaction import *
 from copy import deepcopy
 from datetime import datetime
+from Copula import Copula
 
 class AllocationElement:
 
@@ -114,7 +115,22 @@ class Allocation:
         allocCur = self.Dictionary[cur]
         return Price(round(allocCur.Amount / allocCur.Percentage,2), usedCur)
 
-            
+    def VaR(self, q: float = 0.05,  n: int = 1000, scale: float = 4):
+        C = Copula(list(self.Dictionary.keys()))
+        C.ComputeCorrelation()
+        sim = C.Simulate(n)
+        PnL = []
+        for i in range(n):
+            reti = sim[i]
+            PnLi = 0
+            j = 0
+            for cur in C.CurrencyList:
+                PnLi += self.Dictionary[cur].Percentage * C.Densities[cur].TransformFromStdNorm(reti[j])
+                j += 1
+            PnL += [PnLi]
+        PnL.sort()
+        return Price(round(PnL[int(n*q)] * self.Total.Amount * scale,2), self.Total.Currency)
+
 
     @property
     def ToString(self):

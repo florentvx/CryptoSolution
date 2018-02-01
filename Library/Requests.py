@@ -7,6 +7,7 @@ import time
 import datetime
 import pandas as pd
 from Prices import Currency, CurrencyPair
+import krakenex
 
 
 def ToDate(sec):
@@ -42,6 +43,25 @@ def JsonToDataFrame(Json, Numbers, type = "ledger"):
         DF[Headers[i]] = arrays[i]
     return DF
 
+
+def KrakenLedgerRequest():
+    k = krakenex.API()
+    k.load_key("keys.txt")
+    offset = 0
+    stop = False
+    List = []
+    while not stop:
+        ledger = k.query_private('Ledgers', data = {"ofs": offset})
+        offset += 50
+        Df = JsonToDataFrame(ledger,["time","amount","fee","balance"])
+        Df = Df.sort_values("time",0,True)
+        n = len(Df)
+        if n < 50:
+            stop = True
+        List += [Df]
+    res = pd.concat(List)
+    res = res.sort_values("time")
+    return res
 
 
 
@@ -91,27 +111,31 @@ def OHLCKraken(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime
     DF["count"] = count
     return DF
 
-def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, startDate = datetime.datetime(2000,1,1), freq = 1140, isUpdating : bool = True):
+def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, freq = 1140, live : bool = False, startDate = datetime.datetime(2000,1,1)):
     DF = ReadFile(CurrencyPair(X,Z),freq)
     if DF is None:
         DF = OHLCKraken(X,Z,startDate,freq)
+        return DF
     else:
         # Checks if it needs an update
         n = len(DF)
         DF["time"] = DF["time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
         lastDate = DF["time"][n-1]
-        lastDate = time.mktime(lastDate.timetuple())
+        lastDateInt = time.mktime(lastDate.timetuple())
         now = time.time()
-        nb_lines = int((now - lastDate)/(freq * 60.0) - 1)
-        if nb_lines > 0 and isUpdating:
-            print("Needs an update!")
+        nb_lines = int((now - lastDateInt)/(freq * 60.0))
+        if nb_lines > 1 or live:
+            print("Updating...")
             DF2 = OHLCKraken(X,Z,startDate,freq)
             n2 = len(DF2)
-            DF = DF.append(DF2[(n2-1-nb_lines):(n2-1)])
-    DF = CompleteHoles(DF, freq)
-    LinearInterpolationFillMethod(DF, datetime.datetime(2018,1,11,8), datetime.datetime(2018,1,13,8), freq)
-    CreateGrossFile(CurrencyPair(X, Z),freq,DF)
-    return DF
+            nb_lines = len(DF2[DF2["time"] > lastDate])
+            DF = DF.append(DF2[(n2 - nb_lines):])
+            DF = CompleteHoles(DF, freq)
+            LinearInterpolationFillMethod(DF, datetime.datetime(2018,1,11,8), datetime.datetime(2018,1,13,8), freq)
+            CreateGrossFile(CurrencyPair(X, Z),freq,DF[:(len(DF) - 1)])
+            return DF
+        else:
+            return DF
 
 
 def ComputeReturns(data, col = "close", title = "return"):

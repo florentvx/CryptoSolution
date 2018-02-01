@@ -102,14 +102,14 @@ class FXMarketHistory:
         else:
             raise Exception(XRate.ToString + " : Invalid quote (ref: " + self.CurrencyRef.ToString +")")
 
-    def Download(self, cur: Currency, freq: int, fixing: str = "close", startDate: datetime = datetime.datetime(2017,1,1)):
-        DF = OHLCLibrary(X = cur, Z = self.CurrencyRef, startDate = startDate, freq = freq)
+    def Download(self, cur: Currency, freq: int, fixing: str = "close", live : bool = False, startDate: datetime = datetime.datetime(2017,1,1)):
+        DF = OHLCLibrary(X = cur, Z = self.CurrencyRef, live = live, startDate = startDate, freq = freq)
         for (index, row) in DF.iterrows():
             self.AddQuote(row["time"], cur, row[fixing])
 
-    def DownloadList(self,curList: list, freq: int, fixing: str = "close", startDate: datetime = datetime.datetime(2017,1,1)):
+    def DownloadList(self,curList: list, freq: int, fixing: str = "close", live : bool = False, startDate: datetime = datetime.datetime(2017,1,1)):
         for cur in curList:
-            self.Download(cur, freq, fixing, startDate)
+            self.Download(cur, freq, fixing, live, startDate)
 
     #def DownloadList(self, CurrencyList: list, freq: int):
     #    self.DataFrames = {}

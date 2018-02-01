@@ -1,75 +1,57 @@
 
 import matplotlib.pyplot as plt
 from Requests import *
-import krakenex
+
 
 from Transaction import *
 from IndexCalculations import *
 
 print("CryptoCode.py")
 time.sleep(1)
-k = krakenex.API()
-#ret = k.query_public("OHLC", req = {'pair': "XETHZUSD", 'since': str(1499000000)})
 
-k.load_key("keys.txt")
-
-#print(k.query_private('Balance'))
-#print(k.query_private('TradesHistory'))
-ledger = k.query_private('Ledgers')
-Df = JsonToDataFrame(ledger,["time","amount","fee","balance"])
-
-Df = Df.sort_values("time",0,True)
+Df = KrakenLedgerRequest()
 
 TL = TransactionList()
 TL.Download(Df)
 
-print(TL.ToString)
-
-
 
 FXEURMH = FXMarketHistory()
-FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC],240)
+FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC], 240, live = True)
 #FXEURMH = FXMarketHistory(["XBT","ETH","BCH","XRP","LTC"],240)
 
 AH = AllocationHistory(TL,FXEURMH)
-
-print(AH.GetLastAllocation().ToString)
-
+lastAlloc = AH.GetLastAllocation()
+print(lastAlloc.ToString)
+print(lastAlloc.VaR(0.05).ToString)
 
 
 
 I = Index(AH, FXEURMH)
 I.CalculateAllIndices()
-#print(I.DataFrame)
 I.CalculateStrategyIndex()
-#I.RefactorIndex("BCH",0.2)
-#I.RefactorIndex("LTC",0.10)
-#I.RefactorIndex("XRP", 0.25)
 
-fig1 = plt.figure()
-plt.plot(I.DataFrame["time"], I.DataFrame["Total"])
+plt.figure()
+plt.subplot(211)
+plt.plot(I.DataFrame["time"], I.DataFrame["Index_Strat"])
+plt.plot(I.DataFrame["time"], I.DataFrame["Index_XBT"], 'g-')
+plt.legend(["Strat","XBT"])
+
+plt.subplot(212)
+plt.plot(I.DataFrame["time"], I.DataFrame["Total"], 'r-')
+plt.legend(["Amount"])
 plt.show()
 
-fig2 = plt.figure()
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_XBT"],'-')
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_ETH"],'-')
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_Strat"],'-')
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_BCH"],'-')
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_LTC"],'-')
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_XRP"],'-')
-plt.legend(["BTC", "ETH", "Strat", "BCH","LTC","XRP"])
+fig = plt.figure()
+plt.subplot(211)
+plt.plot(I.DataFrame["time"], I.DataFrame["Alloc_XBT"],'-')
+plt.plot(I.DataFrame["time"], I.DataFrame["Alloc_ETH"],'-')
+plt.legend(["XBT","ETH"])
+plt.subplot(212)
+plt.plot(I.DataFrame["time"], I.DataFrame["Alloc_BCH"],'-')
+plt.plot(I.DataFrame["time"], I.DataFrame["Alloc_LTC"],'-')
+plt.plot(I.DataFrame["time"], I.DataFrame["Alloc_XRP"],'-')
+plt.legend(["BCH", "LTC", "XRP"])
 plt.show()
-
-
-#fig = plt.figure()
-#plt.plot(DF_BTC["time"], DF_BTC["Index"],'-')
-#plt.plot(DF_ETH["time"], DF_ETH["Index"],'-')
-#plt.plot(DF_BCH["time"], DF_BCH["Index"],'-')
-#plt.plot(DF_LTC["time"], DF_LTC["Index"],'-')
-#plt.plot(DF_XRP["time"], DF_XRP["Index"],'-')
-
-#plt.legend(["BTC", "ETH", "BCH", "LTC", "XRP"])
-#plt.show()
 
 
 def PrintExample():

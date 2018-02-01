@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f31697e7-46be-4488-bfd2-667f5c93d3e2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Risk.py</StartupFile>
+    <StartupFile>Copula.py</StartupFile>
     <SearchPath>..\Framework;..\Library</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -20,7 +20,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Risk.py" />
+    <Compile Include="Copula.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Density.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.pyproj">

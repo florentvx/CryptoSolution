@@ -35,7 +35,7 @@ class Strat1Index:
         self.DataFrame["Index"] = Index
 
 
-    def SimpleMAStrat(self, freq1 : int, freq2: int, factor : float = 1):
+    def SimpleMAStrat(self, freq1 : int, freq2: int, factor : float = 1, longOnly: bool = True):
         self.MovingAverage(freq1)
         self.MovingAverage(freq2)
         n = max(freq1,freq2)
@@ -44,75 +44,48 @@ class Strat1Index:
             ma1 = row["MA_" + str(freq1)]
             ma2 = row["MA_" + str(freq2)]
             pos = 1 - factor * abs((ma1 - ma2)/ma2)
-            if ma1 > ma2:
-                alloc += [pos]
+            if longOnly:
+                if ma1 > ma2:
+                    alloc += [max(0,pos)]
+                else:
+                    alloc += [max(0,-pos)]
             else:
-                alloc += [-pos]
+                if ma1 > ma2:
+                    alloc += [pos]
+                else:
+                    alloc += [-pos]
         self.DataFrame["Alloc"] = alloc
         self.ApplyAllocation()
 
 
-s1 = Strat1Index("XBT","EUR",freq = 15)
+s1 = Strat1Index("XBT","EUR",freq = 1)
 s1.Download()
 
-points = [-10./100. + 0.1/100.*i for i in range(2*100)]
-
-pdf = stats.gaussian_kde(s1.DataFrame["Return"][1:])
-df = pdf.evaluate(points)
-print(pdf.factor)
-
-pdf1 = stats.gaussian_kde(s1.DataFrame["Return"][1:],0.1)
-df1 = pdf1.evaluate(points)
-
-pdf2 = stats.gaussian_kde(s1.DataFrame["Return"][1:],0.5)
-df2 = pdf2.evaluate(points)
-
-mean = np.average(s1.DataFrame["Return"][1:])
-std = np.std(s1.DataFrame["Return"][1:])
-
-pdfgauss = [stats.norm.pdf(x,loc = mean, scale = std) for x in points]
-
-print("mean : " + str(mean * 24 * 60 / s1.Freq))
-print("std : " + str(std * 24 * 60 / s1.Freq))
-
-print(np.sum(df)*0.1/100.)
-print(np.sum(pdfgauss)*0.1/100.)
-
-plt.figure()
-plt.plot(points,df)
-plt.plot(points,df1)
-plt.plot(points,df2)
-plt.legend([pdf.factor,pdf1.factor,pdf2.factor])
-plt.show()
-
-plt.figure()
-plt.plot(points,df)
-plt.plot(points,pdfgauss)
-plt.legend(["return","gauss"])
-plt.show()
-
-
-
-
-
-
-s1.SimpleMAStrat(20,50,10)
+s1.SimpleMAStrat(5,10,50)
 #s1.DataFrame.to_clipboard()
 I1 = list(s1.DataFrame["Index"])
-s1.SimpleMAStrat(20,50,20)
+A1 = list(s1.DataFrame["Alloc"])
+s1.SimpleMAStrat(5,10,100)
 I2 = list(s1.DataFrame["Index"])
-s1.SimpleMAStrat(20,50)
+A2 = list(s1.DataFrame["Alloc"])
+s1.SimpleMAStrat(5,10)
 
 
 plt.figure(1)
-plt.subplot(211)
+plt.subplot(311)
 plt.plot(s1.DataFrame["time"], s1.DataFrame["close"])
-plt.plot(s1.DataFrame["time"], s1.DataFrame["MA_" + str(20)])
-plt.plot(s1.DataFrame["time"], s1.DataFrame["MA_" + str(50)])
+plt.plot(s1.DataFrame["time"], s1.DataFrame["MA_" + str(5)])
+plt.plot(s1.DataFrame["time"], s1.DataFrame["MA_" + str(10)])
 
-plt.subplot(212)
+plt.subplot(312)
 plt.plot(s1.DataFrame["time"], I1)
 plt.plot(s1.DataFrame["time"], I2)
 plt.plot(s1.DataFrame["time"], s1.DataFrame["Index"])
-plt.legend([str(10),str(20),str(1)])
+plt.legend([str(50),str(100),str(1)])
+
+plt.subplot(313)
+plt.plot(s1.DataFrame["time"], A1)
+plt.plot(s1.DataFrame["time"], A2)
+plt.plot(s1.DataFrame["time"], s1.DataFrame["Alloc"])
+plt.legend([str(50),str(100),str(1)])
 plt.show()
