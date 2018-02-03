@@ -111,30 +111,11 @@ class FXMarketHistory:
         for cur in curList:
             self.Download(cur, freq, fixing, live, startDate)
 
-    #def DownloadList(self, CurrencyList: list, freq: int):
-    #    self.DataFrames = {}
-    #    for cur in CurrencyList:
-    #        DF = OHLC(X = cur, Z = self.CurrencyRef.name, startDate = datetime.datetime(2017,1,1), freq = freq)
-    #        DF["return"] = DF["close"]/DF["close"].shift(1) - 1
-    #        Index = [1000]
-    #        for (index,row) in DF[1:].iterrows():
-    #            Index += [Index[-1] * (1 + row["return"])]
-    #        DF["Index"] = Index
-    #        self.DataFrames[Currency(cur)] = DF
-
-
-    #def RefactorReturns(self, factor: float, X: Currency):
-    #    DF = self.DataFrames[X]
-    #    DF["return"] = (DF["close"]/DF["close"].shift(1) - 1) * factor
-    #    Index = [1000]
-    #    for (index,row) in DF[1:].iterrows():
-    #        Index += [Index[-1] * (1 + row["return"])]
-    #    DF["Index"] = Index
-    #    self.DataFrames[Currency(X)] = DF
-
-
     def GetFXMarket(self, date: datetime):
         return self.FXMarkets.Get(date)[0]
+
+    def GetLastFXMarket(self):
+        return self.FXMarkets.GetMax()
 
     @property
     def ToString(self):

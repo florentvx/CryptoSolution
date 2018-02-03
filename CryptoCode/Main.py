@@ -14,10 +14,13 @@ Df = KrakenLedgerRequest()
 TL = TransactionList()
 TL.Download(Df)
 
+print(TL.ToString)
+
 
 FXEURMH = FXMarketHistory()
 FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC], 240, live = True)
-#FXEURMH = FXMarketHistory(["XBT","ETH","BCH","XRP","LTC"],240)
+FXLast = FXEURMH.GetLastFXMarket()
+print(FXLast.ToString)
 
 AH = AllocationHistory(TL,FXEURMH)
 lastAlloc = AH.GetLastAllocation()

@@ -32,6 +32,25 @@ class Copula:
                 Sigma[i,j] /= std[i] * std[j]
         self.Sigma = Sigma
 
+    def PrintCorrelation(self):
+        res = ""
+        for i in range(10):
+            res += " "
+        for cur in self.CurrencyList:
+            res += cur.ToString + " "
+        res += "\n"
+        n = len(self.CurrencyList)
+        for i in range(n):
+            curString = self.CurrencyList[i].ToString
+            res += curString
+            for k in range(10 - len(curString)):
+                res += " "
+            for j in range(n):
+                res += " " + str(round(self.Sigma[i][j]*100,2)) + "% "
+            res += "\n"
+        print(res)
+
+
     def SqrtCorrel(self):
         (w,v) = linalg.eig(self.Sigma)
         wreal = []
