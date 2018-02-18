@@ -25,6 +25,9 @@ print(FXLast.ToString)
 AH = AllocationHistory(TL,FXEURMH)
 lastAlloc = AH.GetLastAllocation()
 print(lastAlloc.ToString)
+print(TL.GetAverageCosts())
+
+print("\n")
 print(lastAlloc.VaR(0.05).ToString)
 
 
@@ -35,9 +38,10 @@ I.CalculateStrategyIndex()
 
 plt.figure()
 plt.subplot(211)
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_Strat"])
-plt.plot(I.DataFrame["time"], I.DataFrame["Index_XBT"], 'g-')
-plt.legend(["Strat","XBT"])
+plt.plot(I.DataFrame["time"], I.DataFrame["Index_Strat"],'-')
+plt.plot(I.DataFrame["time"], I.DataFrame["Index_XBT"], '-')
+plt.plot(I.DataFrame["time"], I.DataFrame["Index_ETH"], '-')
+plt.legend(["Strat","XBT","ETH"])
 
 plt.subplot(212)
 plt.plot(I.DataFrame["time"], I.DataFrame["Total"], 'r-')

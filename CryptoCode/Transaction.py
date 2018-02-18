@@ -5,6 +5,25 @@ import datetime
 from Prices import *
 
 
+def DictionaryToDataFrame(data: dict, columns: list, precision: int = 4):
+    Index = []
+    Values = {column:[] for column in columns}
+    for key in data.keys():
+        Index += [key]
+        val = data[key]
+        if type(val) == float:
+            val = round(val,precision)
+            Values[columns[0]] += [val]
+        elif type(val) == list:
+            for i in range(len(val)):
+                Values[columns[i]] += [round(val[i],precision)]
+        else:
+            raise Exception("Type not taken into account")
+    DF = pd.DataFrame(Index, columns = ["Currency"])
+    for col in columns:
+        DF[col] = Values[col]
+    return DF
+
 class TransactionType(Enum):
     NONE = auto()
     Deposit = auto()
@@ -61,6 +80,7 @@ class TransactionList:
         paidPrice = Price(0,curRef)
         receivedPrice = Price(0,curRef)
         fees = Price(0,curRef)
+        self.CcyRef = curRef
         self.List = []
         for (index, row) in data.iterrows():
             if row["type"] == "deposit":
@@ -96,6 +116,28 @@ class TransactionList:
                     fees = Price(0,curRef)
             else:
                 raise Exception("Trade type Unknown")
+    
+    #TODO: What if BTC are exchanged for ETH???
+    def GetAverageCosts(self):
+        res = {}
+        for transaction in self.List:
+            Rec = transaction.Received
+            Paid = transaction.Paid
+            if Rec.Currency != self.CcyRef and Paid.Currency == self.CcyRef:
+                if not Rec.Currency.ToString in res.keys():
+                    res[Rec.Currency.ToString] = [Paid.Amount / Rec.Amount, Rec.Amount]
+                else:
+                    old = res[Rec.Currency.ToString]
+                    newN = old[1] + Rec.Amount
+                    newCost = (old[0] * old[1] + Paid.Amount)/newN
+                    res[Rec.Currency.ToString] = [newCost,newN]
+            elif Rec.Currency == self.CcyRef and Paid.Currency != self.CcyRef:
+                if not Paid.Currency in res.keys():
+                    raise BaseException("Problem: Paid with a currency unpresent in the portfolio")
+                else:
+                    old = res[Paid.Currency.ToString]
+                    res[Paid.Currency.ToString] = [old[0], old[1] - Paid.Amount]
+        return DictionaryToDataFrame(res, ["Cost","Amount"])
 
     @property
     def IsSorted(self):
