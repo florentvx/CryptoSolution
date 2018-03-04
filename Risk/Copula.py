@@ -5,14 +5,14 @@ from pandas import DataFrame
 from scipy import linalg
 
 class Copula:
-    def __init__(self, listCur: list, curRef: Currency = Currency.EUR):
+    def __init__(self, listCur: list, size: int, curRef: Currency = Currency.EUR):
         listCur.remove(curRef)
         self.CurrencyList = listCur
         self.N = len(self.CurrencyList)
         self.CurRef = curRef
         self.Densities = {}
         for cur in self.CurrencyList:
-            d = Density(cur)
+            d = Density(size,cur)
             d.TotalTransform()
             self.Densities[cur] = d
         self.T = len((self.Densities[self.CurrencyList[0]]).StdReturns)

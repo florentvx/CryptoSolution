@@ -115,10 +115,11 @@ class Allocation:
         allocCur = self.Dictionary[cur]
         return Price(round(allocCur.Amount / allocCur.Percentage,2), usedCur)
 
-    def VaR(self, q: float = 0.05,  n: int = 1000, scale: float = 4, printCorrelation: bool = True):
-        C = Copula(list(self.Dictionary.keys()))
+    def VaR(self, q: float = 0.05,  returnSize: int = 400, n: int = 1000, scale: float = 4, printCorrelation: bool = True):
+        C = Copula(list(self.Dictionary.keys()),returnSize)
         C.ComputeCorrelation()
         if (printCorrelation):
+            print("Correlation Matrix (" + str(returnSize) + " returns):")
             C.PrintCorrelation()
         sim = C.Simulate(n)
         PnL = []

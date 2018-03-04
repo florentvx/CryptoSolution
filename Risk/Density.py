@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 class Density:
 
-    def __init__(self, cur: Currency, curRef: Currency = Currency.EUR, fixing: str = "close", freq: int = 240):
+    def __init__(self, size: int, cur: Currency, curRef: Currency = Currency.EUR, fixing: str = "close", freq: int = 240):
+        self.Size = size
         self.Currency = cur
         self.CurrencyRef = curRef
         self.Fixing = fixing
@@ -18,7 +19,8 @@ class Density:
         DF = pd.DataFrame()
         DF = OHLCLibrary(self.Currency, self.CurrencyRef, freq = self.Freq, live = False)
         DF["Return"] = DF[self.Fixing]/DF[self.Fixing].shift(1) - 1
-        self.Returns = list(DF["Return"][1:])
+        n = len(DF)
+        self.Returns = list(DF["Return"][max(1, n - self.Size):])
 
     def GetPDF(self, max: float = 0.5, n: int = 1000):
         self.dx = 2 * max / float(n)
@@ -103,7 +105,7 @@ class Density:
 
     def TotalTransform(self):
         self.DownloadReturns()
-        print("Loaded " + str(len(self.Returns)) + " Returns for the Currency: " + self.Currency.ToString)
+        #print("Loaded " + str(len(self.Returns)) + " Returns for the Currency: " + self.Currency.ToString)
         self.GetPDF()
         self.GetCDF()
         self.GetHistoricalQuantiles()

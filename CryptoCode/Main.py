@@ -28,7 +28,7 @@ print(lastAlloc.ToString)
 print(TL.GetAverageCosts())
 
 print("\n")
-print(lastAlloc.VaR(0.05).ToString)
+print("VaR 5%: " + lastAlloc.VaR(0.05).ToString)
 
 
 
