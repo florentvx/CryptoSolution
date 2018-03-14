@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 
 from Prices import *
-
+from FXMarket import *
 
 def DictionaryToDataFrame(data: dict, columns: list, precision: int = 4):
     Index = []
@@ -73,8 +73,9 @@ class TransactionList:
     def __init__(self):
         self.List = []
 
-    def SetList(self, list):
+    def SetList(self, list, curRef: Currency = Currency.EUR):
         self.List = list
+        self.CcyRef = curRef
 
     def Download(self, data : pd.DataFrame, curRef: Currency = Currency.EUR):
         paidPrice = Price(0,curRef)
@@ -118,26 +119,39 @@ class TransactionList:
                 raise Exception("Trade type Unknown")
     
     #TODO: What if BTC are exchanged for ETH???
-    def GetAverageCosts(self):
+    def GetAverageCosts(self, FXMH: FXMarketHistory):
         res = {}
+        Ccys = {}
+        FX = FXMH.GetLastFXMarket()
         for transaction in self.List:
             Rec = transaction.Received
             Paid = transaction.Paid
-            if Rec.Currency != self.CcyRef and Paid.Currency == self.CcyRef:
+            FXDate = FXMH.GetFXMarket(transaction.Date)
+            if Rec.Currency != self.CcyRef:
                 if not Rec.Currency.ToString in res.keys():
-                    res[Rec.Currency.ToString] = [Paid.Amount / Rec.Amount, Rec.Amount]
+                    res[Rec.Currency.ToString] = [FXDate.ConvertPrice(Paid, self.CcyRef).Amount / Rec.Amount, Rec.Amount,0]
+                    Ccys[Rec.Currency.ToString] = FX.GetFXRate(Rec.Currency, self.CcyRef)
                 else:
                     old = res[Rec.Currency.ToString]
                     newN = old[1] + Rec.Amount
-                    newCost = (old[0] * old[1] + Paid.Amount)/newN
-                    res[Rec.Currency.ToString] = [newCost,newN]
-            elif Rec.Currency == self.CcyRef and Paid.Currency != self.CcyRef:
-                if not Paid.Currency in res.keys():
-                    raise BaseException("Problem: Paid with a currency unpresent in the portfolio")
+                    newCost = (old[0] * old[1] + FXDate.ConvertPrice(Paid, self.CcyRef).Amount) / newN
+                    res[Rec.Currency.ToString] = [newCost,newN,old[2]]
+            if Paid.Currency != self.CcyRef and transaction.Type != TransactionType.Deposit:
+                if not Paid.Currency.ToString in res.keys():
+                    raise Exception("Not possible to short a Currency!")
                 else:
                     old = res[Paid.Currency.ToString]
-                    res[Paid.Currency.ToString] = [old[0], old[1] - Paid.Amount]
-        return DictionaryToDataFrame(res, ["Cost","Amount"])
+                    newN = old[1] - Paid.Amount
+                    previousPnL = old[2]
+                    res[Paid.Currency.ToString] = [old[0],newN,(FXDate.ConvertPrice(Paid,self.CcyRef).Amount - Paid.Amount * old[0]) + previousPnL]
+        DF = DictionaryToDataFrame(res, ["Cost","Amount","Realized PnL"])
+        Rates = []
+        for (index, row) in DF.iterrows():
+            Rates += [Ccys[row["Currency"]]]
+        DF["Rates"] = Rates
+        DF["PnL"] = DF.apply(lambda row: row["Amount"] * (row["Rates"] - row["Cost"]), axis = 1)
+        DF = DF[["Currency", "Amount","Rates","Cost","PnL","Realized PnL"]]
+        return DF
 
     @property
     def IsSorted(self):

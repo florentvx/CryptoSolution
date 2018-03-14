@@ -1,24 +1,27 @@
 from IndexCalculations import *
 
-XCRate0 = XChangeRate(100, Currency("XBT"),Currency("EUR"))
-XCRate1 = XChangeRate(110, Currency("XBT"),Currency("EUR"))
-XCRate2 = XChangeRate(150, Currency("XBT"),Currency("EUR"))
+XCRateBTC0 = XChangeRate(1000, Currency("XBT"),Currency("EUR"))
+XCRateETH0 = XChangeRate(100, Currency("ETH"),Currency("EUR"))
+XCRateBTC1 = XChangeRate(1100, Currency("XBT"),Currency("EUR"))
+XCRateETH1 = XChangeRate(90, Currency("ETH"),Currency("EUR"))
+XCRateBTC2 = XChangeRate(1200, Currency("XBT"),Currency("EUR"))
+XCRateETH2 = XChangeRate(100, Currency("ETH"),Currency("EUR"))
 
 
 FXMH = FXMarketHistory()
-FXMH.AddXChangeRate(datetime(2017,1,1), XCRate0)
+FXMH.AddXChangeRate(datetime(2017,1,1), XCRateBTC0)
+FXMH.AddXChangeRate(datetime(2017,1,1), XCRateETH0)
+FXMH.AddXChangeRate(datetime(2017,3,1), XCRateBTC1)
+FXMH.AddXChangeRate(datetime(2017,3,1), XCRateETH1)
+FXMH.AddXChangeRate(datetime(2017,5,1), XCRateBTC2)
+FXMH.AddXChangeRate(datetime(2017,5,1), XCRateETH2)
+
 
 print(FXMH.ToString)
 
-
-FXMH.AddXChangeRate(datetime(2017,3,1), XCRate1)
-FXMH.AddXChangeRate(datetime(2017,5,1), XCRate2)
-
-print(FXMH.ToString)
-
-t1 = Transaction(TransactionType.Deposit,datetime(2017,2,1),Price(0,Currency.NONE),Price(100,Currency.EUR),Price(0,Currency.NONE))
-t2 = Transaction(TransactionType.Trade,datetime(2017,2,15),Price(50,Currency.EUR),Price(0.5,Currency.XBT),Price(1,Currency.EUR))
-t3 = Transaction(TransactionType.Trade,datetime(2017,4,1),Price(11,Currency.EUR),Price(0.1,Currency.XBT),Price(1,Currency.EUR))
+t1 = Transaction(TransactionType.Deposit,datetime(2017,2,1),Price(0,Currency.NONE),Price(1000,Currency.EUR),Price(0,Currency.NONE))
+t2 = Transaction(TransactionType.Trade,datetime(2017,2,15),Price(500,Currency.EUR),Price(0.5,Currency.XBT),Price(0,Currency.EUR))
+t3 = Transaction(TransactionType.Trade,datetime(2017,4,1),Price(0.25,Currency.XBT),Price(3.4375,Currency.ETH),Price(0,Currency.EUR))
 
 
 TL = TransactionList()
@@ -27,6 +30,8 @@ TL.SetList([t1,t2,t3])
 AH = AllocationHistory(TL,FXMH)
 
 print(AH.ToString)
+
+print(TL.GetAverageCosts(FXMH))
 
 I = Index(AH,FXMH)
 print(I.DataFrame)

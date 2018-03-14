@@ -18,14 +18,14 @@ print(TL.ToString)
 
 
 FXEURMH = FXMarketHistory()
-FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC], 240, live = True)
+FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC], 240, live = False)
 FXLast = FXEURMH.GetLastFXMarket()
 print(FXLast.ToString)
 
 AH = AllocationHistory(TL,FXEURMH)
 lastAlloc = AH.GetLastAllocation()
 print(lastAlloc.ToString)
-print(TL.GetAverageCosts())
+print(TL.GetAverageCosts(FXEURMH))
 
 print("\n")
 print("VaR 5%: " + lastAlloc.VaR(0.05).ToString)

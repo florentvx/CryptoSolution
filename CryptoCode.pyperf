@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ProfilingTarget xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ProjectTarget>
+    <TargetProject>e79dc1ee-3e40-4c5f-9d2b-bd9345b2226b</TargetProject>
+    <FriendlyName>CryptoCode</FriendlyName>
+  </ProjectTarget>
+  <Reports>
+    <Report>
+      <Filename>C:\Users\flore\AppData\Local\Temp\CryptoCode_20180313.vsp</Filename>
+    </Report>
+  </Reports>
+</ProfilingTarget>
