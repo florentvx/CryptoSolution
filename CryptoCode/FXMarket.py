@@ -4,17 +4,14 @@ from Prices import *
 from SortedDictionary import *
 from Library import CreateGrossFile
 import datetime
-
+from typing import List
 
 class FXMarket:
 
-    def __init__(self, XChangeRates: list):
+    def __init__(self, XChangeRates: List[XChangeRate]):
         self.FX = []
         for xRate in XChangeRates:
-            if type(xRate) == XChangeRate:
-                self.FX += [xRate]
-            else:
-                raise Exception("Wrong Input")
+            self.FX += [xRate]
 
     def IsFXRate(self,X: Currency, Y: Currency):
         if X==Y:
@@ -107,7 +104,7 @@ class FXMarketHistory:
         for (index, row) in DF.iterrows():
             self.AddQuote(row["time"], cur, row[fixing])
 
-    def DownloadList(self,curList: list, freq: int, fixing: str = "close", live : bool = False, startDate: datetime = datetime.datetime(2017,1,1)):
+    def DownloadList(self,curList: List[Currency], freq: int, fixing: str = "close", live : bool = False, startDate: datetime = datetime.datetime(2017,1,1)):
         for cur in curList:
             self.Download(cur, freq, fixing, live, startDate)
 

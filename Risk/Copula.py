@@ -3,9 +3,10 @@ from Density import Density
 from numpy import matrix, zeros, diag, sqrt, random
 from pandas import DataFrame
 from scipy import linalg
+from typing import List
 
 class Copula:
-    def __init__(self, listCur: list, size: int, curRef: Currency = Currency.EUR):
+    def __init__(self, listCur: List[Currency], size: int, curRef: Currency = Currency.EUR):
         listCur.remove(curRef)
         self.CurrencyList = listCur
         self.N = len(self.CurrencyList)
