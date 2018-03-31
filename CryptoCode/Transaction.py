@@ -150,7 +150,11 @@ class TransactionList:
             Rates += [Ccys[row["Currency"]]]
         DF["Rates"] = Rates
         DF["PnL"] = DF.apply(lambda row: row["Amount"] * (row["Rates"] - row["Cost"]), axis = 1)
-        DF = DF[["Currency", "Amount","Rates","Cost","PnL","Realized PnL"]]
+        columns = ["Currency", "Amount","Rates","Cost","PnL","Realized PnL"]
+        DF = DF[columns]
+        totalRow = ["Total"," "," "," ",DF["PnL"].sum(),DF["Realized PnL"].sum()]
+        totalDf = pd.DataFrame([totalRow],columns = columns)
+        DF = DF.append(totalDf, ignore_index = True)
         return DF
 
     @property
