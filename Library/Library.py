@@ -1,7 +1,7 @@
 import pandas as pd
 #from pandas.io.json.json import to_json
 from Prices import Currency, CurrencyPair
-from os.path import isfile
+from os import path
 import datetime
 import time
 
@@ -16,11 +16,11 @@ def GetFilePath(curPair : CurrencyPair, freq: int):
 
 def GetFile(curPair: CurrencyPair, freq: int):
     res = GetFilePath(curPair, freq)
-    if isfile(res):
+    if path.isfile(res):
         return res
     else:
         resInv = GetFilePath(curPair.GetInverse(), freq)
-        if isfile(resInv):
+        if path.isfile(resInv):
             return resInv
         else:
             return None

@@ -5,6 +5,7 @@ import json
 import urllib.request
 import time
 import datetime
+from calendar import timegm
 import pandas as pd
 from Prices import Currency, CurrencyPair
 import krakenex
@@ -121,9 +122,10 @@ def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, freq = 1140, live : bool = F
         n = len(DF)
         DF["time"] = DF["time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
         lastDate = DF["time"][n-1]
+        now = time.gmtime(time.time()) # return time in UTC: = UK WINTER time
+        #print(now)
         lastDateInt = time.mktime(lastDate.timetuple())
-        now = time.time()
-        nb_lines = int((now - lastDateInt)/(freq * 60.0))
+        nb_lines = int((timegm(now) - lastDateInt)/(freq * 60.0))
         if nb_lines > 1 or live:
             print("Updating...")
             DF2 = OHLCKraken(X,Z,startDate,freq)
