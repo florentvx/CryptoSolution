@@ -17,6 +17,10 @@ class Currency(Enum):
         return str(self._name_)
 
     @property
+    def IsFiat(self):
+        return self == Currency.EUR or self == Currency.USD
+
+    @property
     def ToString(self):
         if self == Currency.NONE:
             return "None"

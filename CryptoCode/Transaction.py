@@ -28,17 +28,11 @@ class TransactionType(Enum):
     NONE = auto()
     Deposit = auto()
     Trade = auto()
+    Withdrawals = auto()
 
     @property
     def ToString(self):
-        if self == TransactionType.NONE:
-            return "None"
-        elif self == TransactionType.Deposit:
-            return "Deposit"
-        elif self == TransactionType.Trade:
-            return "Trade"
-        else:
-            raise Exception("Transaction Type Error")
+        return self.name
 
 class Transaction:
 
@@ -48,7 +42,7 @@ class Transaction:
         self.Paid = paid
         self.Received = received
         self.Fees = fees
-        if type != TransactionType.Deposit:
+        if type == TransactionType.Trade:
             ratio = int(paid.Amount / received.Amount * 10000)/10000.0
             self.XRate = XChangeRate(ratio, received.Currency,paid.Currency)
             #if ratio > 1:
@@ -78,11 +72,11 @@ class TransactionList:
         self.CcyRef = curRef
 
     def Download(self, data : pd.DataFrame, curRef: Currency = Currency.EUR):
+        self.CcyRef = curRef
+        self.List = []
         paidPrice = Price(0,curRef)
         receivedPrice = Price(0,curRef)
         fees = Price(0,curRef)
-        self.CcyRef = curRef
-        self.List = []
         for (index, row) in data.iterrows():
             if row["type"] == "deposit":
                 self.List += [Transaction(
@@ -115,6 +109,16 @@ class TransactionList:
                     paidPrice = Price(0,curRef)
                     receivedPrice = Price(0,curRef)
                     fees = Price(0,curRef)
+            elif row["type"] == "withdrawal":
+                asset = row["asset"]
+                curr = Currency[asset[(len(asset)-3):]]
+                paid = Price(-row["amount"],curr)
+                self.List += [Transaction(
+                    TransactionType.Withdrawals,
+                    row["time"],
+                    paid,
+                    Price(0,curr),
+                    Price(row["fee"],curr))]
             else:
                 raise Exception("Trade type Unknown")
     
@@ -127,23 +131,28 @@ class TransactionList:
             Rec = transaction.Received
             Paid = transaction.Paid
             FXDate = FXMH.GetFXMarket(transaction.Date)
-            if Rec.Currency != self.CcyRef:
-                if not Rec.Currency.ToString in res.keys():
-                    res[Rec.Currency.ToString] = [FXDate.ConvertPrice(Paid, self.CcyRef).Amount / Rec.Amount, Rec.Amount,0]
-                    Ccys[Rec.Currency.ToString] = FX.GetFXRate(Rec.Currency, self.CcyRef)
-                else:
-                    old = res[Rec.Currency.ToString]
-                    newN = old[1] + Rec.Amount
-                    newCost = (old[0] * old[1] + FXDate.ConvertPrice(Paid, self.CcyRef).Amount) / newN
-                    res[Rec.Currency.ToString] = [newCost,newN,old[2]]
-            if Paid.Currency != self.CcyRef and transaction.Type != TransactionType.Deposit:
-                if not Paid.Currency.ToString in res.keys():
-                    raise Exception("Not possible to short a Currency!")
-                else:
-                    old = res[Paid.Currency.ToString]
-                    newN = old[1] - Paid.Amount
-                    previousPnL = old[2]
-                    res[Paid.Currency.ToString] = [old[0],newN,(FXDate.ConvertPrice(Paid,self.CcyRef).Amount - Paid.Amount * old[0]) + previousPnL]
+            if transaction.Type == TransactionType.Withdrawals:
+                curr = transaction.Fees.Currency
+                old = res[curr.ToString]
+                res[curr.ToString] = [old[0],old[1] - transaction.Fees.Amount,old[2]]
+            else:
+                if Rec.Currency != self.CcyRef:
+                    if not Rec.Currency.ToString in res.keys():
+                        res[Rec.Currency.ToString] = [FXDate.ConvertPrice(Paid, self.CcyRef).Amount / Rec.Amount, Rec.Amount,0]
+                        Ccys[Rec.Currency.ToString] = FX.GetFXRate(Rec.Currency, self.CcyRef)
+                    else:
+                        old = res[Rec.Currency.ToString]
+                        newN = old[1] + Rec.Amount
+                        newCost = (old[0] * old[1] + FXDate.ConvertPrice(Paid, self.CcyRef).Amount) / newN
+                        res[Rec.Currency.ToString] = [newCost,newN,old[2]]
+                if Paid.Currency != self.CcyRef and transaction.Type != TransactionType.Deposit:
+                    if not Paid.Currency.ToString in res.keys():
+                        raise Exception("Not possible to short a Currency!")
+                    else:
+                        old = res[Paid.Currency.ToString]
+                        newN = old[1] - Paid.Amount
+                        previousPnL = old[2]
+                        res[Paid.Currency.ToString] = [old[0],newN,(FXDate.ConvertPrice(Paid,self.CcyRef).Amount - Paid.Amount * old[0]) + previousPnL]
         DF = DictionaryToDataFrame(res, ["Cost","Amount","Realized PnL"])
         Rates = []
         for (index, row) in DF.iterrows():

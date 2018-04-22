@@ -68,10 +68,8 @@ class Allocation:
         return newAlloc
 
     def AddTransaction(self, transaction: Transaction, FX: FXMarket):
-
         res = deepcopy(self.Dictionary)
         fees = AllocationElement(0.,0,Currency.NONE)
-
         try:
             allocIn = res[transaction.Received.Currency]
             allocIn.SetAmount(allocIn.Amount + transaction.Received.Amount)
@@ -79,30 +77,27 @@ class Allocation:
             res[transaction.Received.Currency] = \
                 AllocationElement(0.,transaction.Received.Amount, transaction.Received.Currency)
 
-        if transaction.Type == TransactionType.Trade:
-
-            # Changing the Amounts
-
-                # Paid
-
+        # Changing the Amounts
+        
+        # Paid
+        if transaction.Type != TransactionType.Withdrawals or transaction.Paid.Currency.IsFiat:
             try:
                 alloc = res[transaction.Paid.Currency]
                 alloc.SetAmount(alloc.Amount - transaction.Paid.Amount)
                 if alloc.Amount < 0:
                     raise Exception("Paid more than available")
             except:
-               raise Exception("Paid in unavailable currency")
+                raise Exception("Paid in unavailable currency")
 
-                # Fees
-
-            try:
-                fAlloc = res[transaction.Fees.Currency]
-                fAlloc.SetAmount(fAlloc.Amount - transaction.Fees.Amount)
-                if fAlloc.Amount < 0:
-                    raise Exception("Paid more than available (fees)")
-                fees = AllocationElement(0., transaction.Fees.Amount, transaction.Fees.Currency)
-            except:
-                raise Exception("Paid in unavailable currency (fees)")
+        # Fees
+        try:
+            fAlloc = res[transaction.Fees.Currency]
+            fAlloc.SetAmount(fAlloc.Amount - transaction.Fees.Amount)
+            if fAlloc.Amount < 0:
+                raise Exception("Paid more than available (fees)")
+            fees = AllocationElement(0., transaction.Fees.Amount, transaction.Fees.Currency)
+        except:
+            raise Exception("Paid in unavailable currency (fees)")
 
         newAlloc = Allocation(res, fees)
         newAlloc.UpdatePercentages(FX)
@@ -158,6 +153,7 @@ class AllocationHistory:
         for transaction in TL.List:
             FX = FXMH.GetFXMarket(transaction.Date)
             alloc = alloc.AddTransaction(transaction,FX)
+            #print(alloc.Dictionary[Currency.EUR].ToString)
             alloc.CalculateTotal(FX)
             self.History.Add(transaction.Date, alloc)
         for date in FXMH.FXMarkets.Keys:
