@@ -5,7 +5,7 @@
     <ProjectGuid>75977049-e7ea-483a-a76c-50e4ee776892</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>Library.py</StartupFile>
-    <SearchPath>..\CryptoCode;..\Framework</SearchPath>
+    <SearchPath>..\..\CryptoSolution</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Library</Name>
@@ -22,18 +22,12 @@
   <ItemGroup>
     <Compile Include="Library.py" />
     <Compile Include="Requests.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CryptoCode\CryptoCode.pyproj">
-      <Name>CryptoCode</Name>
-      <Project>{e79dc1ee-3e40-4c5f-9d2b-bd9345b2226b}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Framework\Framework.pyproj">
-      <Name>Framework</Name>
-      <Project>{ab0bcc0b-40a6-46f3-80d6-3438e118d839}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Compile Include="SetUp.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

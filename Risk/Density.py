@@ -1,5 +1,5 @@
-from Prices import Currency
-from Requests import OHLCLibrary
+from Framework.Prices import Currency
+from Library.Requests import OHLCLibrary
 from scipy import stats
 import pandas as pd
 import math as mth

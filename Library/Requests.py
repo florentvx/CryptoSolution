@@ -1,14 +1,16 @@
+import Library.SetUp
 import urllib
 from pandas import Timestamp
-from Library import *
 import json
 import urllib.request
 import time
 import datetime
 from calendar import timegm
 import pandas as pd
-from Prices import Currency, CurrencyPair
+from Framework.Prices import Currency, CurrencyPair
+from Framework.Time import date_to_excel, struct_time_to_datetime 
 import krakenex
+from Library.Library import ReadFile,CompleteHoles,LinearInterpolationFillMethod,CreateGrossFile
 
 
 def ToDate(sec):
@@ -45,9 +47,9 @@ def JsonToDataFrame(Json, Numbers, type = "ledger"):
     return DF
 
 
-def KrakenLedgerRequest():
+def KrakenLedgerRequest(path: str):
     k = krakenex.API()
-    k.load_key("keys.txt")
+    k.load_key(path)
     offset = 0
     stop = False
     List = []
@@ -124,8 +126,9 @@ def OHLCLibrary(X = Currency.XBT, Z = Currency.EUR, freq = 1140, live : bool = F
         lastDate = DF["time"][n-1]
         now = time.gmtime(time.time()) # return time in UTC: = UK WINTER time
         #print(now)
-        lastDateInt = time.mktime(lastDate.timetuple())
-        nb_lines = int((timegm(now) - lastDateInt)/(freq * 60.0))
+        lastDateInt = date_to_excel(lastDate)
+        nowInt = date_to_excel(struct_time_to_datetime(now))
+        nb_lines = int((nowInt - lastDateInt)/(freq / 60.0 / 24.0))
         if nb_lines > 1 or live:
             print("Updating...")
             DF2 = OHLCKraken(X,Z,startDate,freq)

@@ -1,8 +1,8 @@
 
-from Requests import OHLCLibrary
-from Prices import *
-from SortedDictionary import *
-from Library import CreateGrossFile
+from Library.Requests import OHLCLibrary
+from Framework.Prices import Currency, Price, XChangeRate
+from Framework.SortedDictionary import SortedDictionary
+from Library.Library import CreateGrossFile
 import datetime
 from typing import List
 

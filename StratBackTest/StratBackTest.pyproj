@@ -6,11 +6,13 @@
     <ProjectHome>
     </ProjectHome>
     <StartupFile>Strat1Index.py</StartupFile>
-    <SearchPath>..\CryptoCode;..\Library;..\Framework</SearchPath>
+    <SearchPath>..\</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>StratBackTest</Name>
     <RootNamespace>CryptoSolution</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +23,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="SetUp.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Strat1Index.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

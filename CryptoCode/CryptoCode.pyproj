@@ -5,11 +5,13 @@
     <ProjectGuid>e79dc1ee-3e40-4c5f-9d2b-bd9345b2226b</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>Main.py</StartupFile>
-    <SearchPath>..\Library;..\Framework;..\Risk</SearchPath>
+    <SearchPath>..\..\CryptoSolution</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>CryptoCode</Name>
     <RootNamespace>CryptoCode</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,22 +27,18 @@
     <Compile Include="FXMarket.py" />
     <Compile Include="IndexCalculations.py" />
     <Compile Include="Main.py" />
+    <Compile Include="SetUp.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Transaction.py" />
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Framework\Framework.pyproj">
-      <Name>Framework</Name>
-      <Project>{ab0bcc0b-40a6-46f3-80d6-3438e118d839}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Library\Library.pyproj">
       <Name>Library</Name>
       <Project>{75977049-e7ea-483a-a76c-50e4ee776892}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Risk\Risk.pyproj">
-      <Name>Risk</Name>
-      <Project>{f31697e7-46be-4488-bfd2-667f5c93d3e2}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

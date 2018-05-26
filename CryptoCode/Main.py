@@ -1,15 +1,22 @@
-
+from SetUp import PROJECT_DIR
 import matplotlib.pyplot as plt
-from Requests import *
+from Library.Requests import KrakenLedgerRequest
+from Framework.Prices import Currency
+from CryptoCode.FXMarket import FXMarketHistory
+from CryptoCode.Transaction import TransactionList
+from CryptoCode.IndexCalculations import Index
+from CryptoCode.AllocationHistory import AllocationHistory
+from Library.Library import time
+import sys
 
-
-from Transaction import *
-from IndexCalculations import *
+live = False
+if __name__ == "__main__":
+    live = sys.argv[1] == "LIVE"
 
 print("CryptoCode.py")
 time.sleep(1)
 
-Df = KrakenLedgerRequest()
+Df = KrakenLedgerRequest(PROJECT_DIR + "\\..\\..\\" + "keys.txt")
 
 TL = TransactionList()
 TL.Download(Df)
@@ -18,7 +25,7 @@ print(TL.ToString)
 
 
 FXEURMH = FXMarketHistory()
-FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC], 240, live = False)
+FXEURMH.DownloadList([Currency.XBT,Currency.ETH,Currency.BCH,Currency.XRP,Currency.LTC], 240, live = live)
 FXLast = FXEURMH.GetLastFXMarket()
 print(FXLast.ToString)
 

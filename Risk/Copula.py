@@ -1,5 +1,5 @@
-from Prices import Currency
-from Density import Density
+from Framework.Prices import Currency
+from Risk.Density import Density
 from numpy import matrix, zeros, diag, sqrt, random
 from pandas import DataFrame
 from scipy import linalg

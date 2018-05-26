@@ -5,7 +5,7 @@
     <ProjectGuid>f31697e7-46be-4488-bfd2-667f5c93d3e2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>Copula.py</StartupFile>
-    <SearchPath>..\Framework;..\Library</SearchPath>
+    <SearchPath>..\..\CryptoSolution</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Risk</Name>
@@ -24,6 +24,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Density.py" />
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.pyproj">

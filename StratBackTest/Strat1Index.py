@@ -1,8 +1,9 @@
-from matplotlib import pyplot as plt
+import SetUp
+import matplotlib.pyplot as plt
 import pandas as pd
 from numpy import int, str, float
-from Prices import Currency
-from Requests import OHLCLibrary
+from Framework.Prices import Currency
+from Library.Requests import OHLCLibrary
 from scipy import stats
 from math import sqrt
 import numpy as np

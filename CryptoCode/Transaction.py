@@ -1,9 +1,9 @@
 from enum import Enum, auto
 import pandas as pd
-import datetime
+from datetime import datetime
 
-from Prices import *
-from FXMarket import *
+from Framework.Prices import Currency, Price, XChangeRate
+from CryptoCode.FXMarket import FXMarketHistory
 
 def DictionaryToDataFrame(data: dict, columns: list, precision: int = 4):
     Index = []

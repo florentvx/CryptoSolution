@@ -1,8 +1,10 @@
-from FXMarket import *
-from Transaction import *
+from Framework.Prices import Currency, Price
+from Framework.SortedDictionary import SortedDictionary
+from CryptoCode.FXMarket import FXMarket, FXMarketHistory
+from CryptoCode.Transaction import TransactionType, Transaction, TransactionList
 from copy import deepcopy
 from datetime import datetime
-from Copula import Copula
+from Risk.Copula import Copula
 
 class AllocationElement:
 

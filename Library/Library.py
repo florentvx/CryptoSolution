@@ -1,11 +1,12 @@
+from SetUp import PROJECT_DIR
 import pandas as pd
 #from pandas.io.json.json import to_json
-from Prices import Currency, CurrencyPair
+from Framework.Prices import Currency, CurrencyPair
 from os import path
 import datetime
 import time
 
-pathLibrary = "../Library/CsvLibrary/"
+pathLibrary = PROJECT_DIR + "\\..\\..\\Library\CsvLibrary\\"
 
 
 
